@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='pyramid_xml_renderer',
+    name='PyramidXmlRenderer',
     version='0.1.0',
     author='Alexander Vasilyev',
     author_email='alexvassel@gmail.com',
