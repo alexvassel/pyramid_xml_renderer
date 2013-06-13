@@ -4,12 +4,15 @@ from serializer import dumps
 
 
 class XML(object):
+    def __init__(self):
+        self.renderers = {}
+
     def __call__(self, info):
         def _render(value, system):
             request = system.get('request')
             #Getting time of rendering xml
             t = time()
-            resp = dumps(value)
+            resp = dumps(value, self.renderers)
             t = abs(t - time())
             if request is not None:
                 response = request.response
@@ -20,3 +23,6 @@ class XML(object):
                     response.headers['Xml-Rendering-Time'] = str(t) + ' seconds'
             return resp
         return _render
+
+    def add_renderer(self, renderer_type, renderer_func):
+        self.renderers[renderer_type] = renderer_func

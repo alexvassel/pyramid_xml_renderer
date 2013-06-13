@@ -2,7 +2,7 @@
 import xml.etree.cElementTree as ET
 
 
-def _convert_to_xml_recurse(parent, data):
+def _convert_to_xml_recurse(parent, data, renderers={}):
     """helper function for converting given data var to xml"""
     #Iterating through a dict and creating parts of xml like <key></key>
     if isinstance(data, dict):
@@ -16,29 +16,34 @@ def _convert_to_xml_recurse(parent, data):
                     elem = ET.Element('item')
                     listelem.append(elem)
                     #Recurse calling with dict value
-                    _convert_to_xml_recurse(elem, listchild)
+                    _convert_to_xml_recurse(elem, listchild, renderers=renderers)
             else:
                 #Creating xml element from dict key
                 elem = ET.Element(tag)
                 parent.append(elem)
                 #Recurse calling with dict value
-                _convert_to_xml_recurse(elem, child)
+                _convert_to_xml_recurse(elem, child, renderers=renderers)
     #Same thing for lists and tuples, parts are like <item></item>
     elif isinstance(data, list) or isinstance(data, tuple):
         for child in data:
             elem = ET.Element('item')
             parent.append(elem)
             #Recurse calling with list or tuple item
-            _convert_to_xml_recurse(elem, child)
+            _convert_to_xml_recurse(elem, child, renderers=renderers)
     #If data not list, tuple or dict, then adding its value to its parent (filling element with value)
     else:
-        try:
-            parent.text = unicode(data)
-        except UnicodeDecodeError:
-            parent.text = data.decode('utf8')
+        for r in renderers.iteritems():
+            if isinstance(data, r[0]):
+                parent.text = str(r[1](data))
+                break
+        else:
+            try:
+                parent.text = unicode(data)
+            except UnicodeDecodeError:
+                parent.text = data.decode('utf8')
 
 
-def dumps(data):
+def dumps(data, renderers={}):
     """Creates xml string from data variable with structure like
     Does work with anything that can be passed to 'str' class construcor
     <?xml version='1.0' encoding='utf-8'?>
@@ -82,11 +87,11 @@ def dumps(data):
     >>> dumps()
     Traceback (most recent call last):
      ...
-    TypeError: dumps() takes exactly 1 argument (0 given)
+    TypeError: dumps() takes at least 1 argument (0 given)
     """
 
     root = ET.Element('data')
-    _convert_to_xml_recurse(root, data)
+    _convert_to_xml_recurse(root, data, renderers)
     return "<?xml version='1.0' encoding='utf-8'?>" + ET.tostring(root)
 
 
