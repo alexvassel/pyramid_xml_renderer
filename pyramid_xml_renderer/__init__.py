@@ -24,5 +24,5 @@ class XML(object):
             return resp
         return _render
 
-    def add_renderer(self, renderer_type, renderer_func):
+    def add_adapter(self, renderer_type, renderer_func):
         self.renderers[renderer_type] = renderer_func
