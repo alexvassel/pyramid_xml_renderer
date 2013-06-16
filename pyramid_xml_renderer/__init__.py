@@ -5,14 +5,14 @@ from serializer import dumps
 
 class XML(object):
     def __init__(self):
-        self.renderers = {}
+        self.adapters = {}
 
     def __call__(self, info):
         def _render(value, system):
             request = system.get('request')
             #Getting time of rendering xml
             t = time()
-            resp = dumps(value, self.renderers)
+            resp = dumps(value, self.adapters)
             t = abs(t - time())
             if request is not None:
                 response = request.response
@@ -24,5 +24,5 @@ class XML(object):
             return resp
         return _render
 
-    def add_adapter(self, renderer_type, renderer_func):
-        self.renderers[renderer_type] = renderer_func
+    def add_adapter(self, adapter_type, adapter_func):
+        self.adapters[adapter_type] = adapter_func

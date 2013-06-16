@@ -2,7 +2,7 @@
 import xml.etree.cElementTree as ET
 
 
-def _convert_to_xml_recurse(parent, data, renderers={}):
+def _convert_to_xml_recurse(parent, data, adapters={}):
     """helper function for converting given data var to xml"""
     #Iterating through a dict and creating parts of xml like <key></key>
     if isinstance(data, dict):
@@ -16,27 +16,31 @@ def _convert_to_xml_recurse(parent, data, renderers={}):
                     elem = ET.Element('item')
                     listelem.append(elem)
                     #Recurse calling with dict value
-                    _convert_to_xml_recurse(elem, listchild, renderers=renderers)
+                    _convert_to_xml_recurse(elem, listchild, adapters)
             else:
                 #Creating xml element from dict key
                 elem = ET.Element(tag)
                 parent.append(elem)
                 #Recurse calling with dict value
-                _convert_to_xml_recurse(elem, child, renderers=renderers)
+                _convert_to_xml_recurse(elem, child, adapters)
     #Same thing for lists and tuples, parts are like <item></item>
     elif isinstance(data, list) or isinstance(data, tuple):
         for child in data:
             elem = ET.Element('item')
             parent.append(elem)
             #Recurse calling with list or tuple item
-            _convert_to_xml_recurse(elem, child, renderers=renderers)
+            _convert_to_xml_recurse(elem, child, adapters)
+    #If data is an user's object with __xml__ method we getting it's value
+    elif hasattr(data, '__xml__'):
+        data = data.__xml__()
+        #Recurse calling with data from __xml__ method
+        _convert_to_xml_recurse(parent, data, adapters)
     #If data not list, tuple or dict, then adding its value to its parent (filling element with value)
     else:
-        for r in renderers.iteritems():
-            if isinstance(data, r[0]):
-                parent.text = str(r[1](data))
-                break
-        else:
+        try:
+            adapter = adapters[type(data)]
+            parent.text = str(adapter(data))
+        except KeyError:
             try:
                 parent.text = unicode(data)
             except UnicodeDecodeError:
