@@ -32,9 +32,11 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
             _convert_to_xml_recurse(elem, child, adapters)
     #If data is an user's object with __xml__ method we getting it's value
     elif hasattr(data, '__xml__'):
+        elem = ET.Element('users_object')
+        parent.append(elem)
         data = data.__xml__()
         #Recurse calling with data from __xml__ method
-        _convert_to_xml_recurse(parent, data, adapters)
+        _convert_to_xml_recurse(elem, data, adapters)
     #If data not list, tuple or dict, then adding its value to its parent (filling element with value)
     else:
         try:
