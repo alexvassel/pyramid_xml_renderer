@@ -41,7 +41,10 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
     else:
         try:
             adapter = adapters[type(data)]
-            parent.text = str(adapter(data))
+            try:
+                parent.text = unicode(adapter(data))
+            except UnicodeDecodeError:
+                parent.text = adapter(data).decode('utf8')
         except KeyError:
             try:
                 parent.text = unicode(data)
