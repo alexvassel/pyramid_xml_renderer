@@ -53,8 +53,8 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
 
 
 def dumps(data, renderers={}):
-    """Creates xml string from data variable with structure like
-    Does work with anything that can be passed to 'str' class construcor
+    """
+    Creates xml string from data variable with structure like
     <?xml version='1.0' encoding='utf-8'?>
     <data>
         data here
