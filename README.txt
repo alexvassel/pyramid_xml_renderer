@@ -2,8 +2,8 @@ pyramid_xml_renderer
 ====================
 
 pyramid_xml_renderer gives the ability to convert structures to xml string (serializers.dumps)
-and contains class XML (__init__.py) that can be used in pyramid framework to render structures to xml page
-Typical usage in Pyramid (__init__.py of your app) looks like this::
+; contains class XML ('__init__.py') that can be used in Pyramid framework to render structures to xml
+Typical usage in Pyramid ('__init__.py' of your app) looks like this:
 
     #!/usr/bin/env python
 
