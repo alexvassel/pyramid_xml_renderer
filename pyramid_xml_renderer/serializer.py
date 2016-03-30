@@ -6,7 +6,7 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
     """helper function for converting given data var to xml"""
     #Iterating through a dict and creating parts of xml like <key></key>
     if isinstance(data, dict):
-        for (tag, child) in sorted(data.iteritems()):
+        for (tag, child) in sorted(data.items()):
             if isinstance(child, list) or isinstance(child, tuple):
                 #Creating xml element from dict key
                 listelem = ET.Element(tag)
@@ -101,7 +101,7 @@ def dumps(data, renderers={}):
 
     root = ET.Element('data')
     _convert_to_xml_recurse(root, data, renderers)
-    return "<?xml version='1.0' encoding='utf-8'?>" + ET.tostring(root)
+    return "<?xml version='1.0' encoding='utf-8'?>" + ET.tostring(root, encoding='utf8', method='xml')
 
 
 if __name__ == "__main__":
