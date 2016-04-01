@@ -105,7 +105,7 @@ def dumps(data, renderers={}):
 
     root = ET.Element('data')
     _convert_to_xml_recurse(root, data, renderers)
-    return "<?xml version='1.0' encoding='utf-8'?>" + ET.tostring(root, encoding='utf8', method='xml')
+    return "<?xml version='1.0' encoding='utf-8'?>{}".format(ET.tostring(root, encoding='utf-8', method='xml'))
 
 
 if __name__ == "__main__":
