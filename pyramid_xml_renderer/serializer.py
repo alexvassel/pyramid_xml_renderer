@@ -5,9 +5,11 @@ import xml.etree.cElementTree as ET
 def _convert_to_xml_recurse(parent, data, adapters={}):
     """helper function for converting given data var to xml"""
     #Iterating through a dict and creating parts of xml like <key></key>
+    # import ipdb
+    # ipdb.set_trace()
     if isinstance(data, dict):
         for (tag, child) in sorted(data.items()):
-            if isinstance(child, list) or isinstance(child, tuple):
+            if isinstance(child, (list, tuple)):
                 #Creating xml element from dict key
                 listelem = ET.Element(tag)
                 parent.append(listelem)
@@ -24,7 +26,7 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
                 #Recurse calling with dict value
                 _convert_to_xml_recurse(elem, child, adapters)
     #Same thing for lists and tuples, parts are like <item></item>
-    elif isinstance(data, list) or isinstance(data, tuple):
+    elif isinstance(data, (list, tuple)):
         for child in data:
             elem = ET.Element('item')
             parent.append(elem)
@@ -37,6 +39,10 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
         data = data.__xml__()
         #Recurse calling with data from __xml__ method
         _convert_to_xml_recurse(elem, data, adapters)
+    elif data is None or data == 'None':
+        # Elements which value is None should be absent or empty. In this case, it will be empty
+        parent.text = ''
+
     #If data not list, tuple or dict, then adding its value to its parent (filling element with value)
     else:
         try:
