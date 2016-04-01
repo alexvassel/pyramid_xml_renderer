@@ -5,8 +5,6 @@ import xml.etree.cElementTree as ET
 def _convert_to_xml_recurse(parent, data, adapters={}):
     """helper function for converting given data var to xml"""
     #Iterating through a dict and creating parts of xml like <key></key>
-    # import ipdb
-    # ipdb.set_trace()
     if isinstance(data, dict):
         for (tag, child) in sorted(data.items()):
             if isinstance(child, (list, tuple)):
@@ -88,7 +86,7 @@ def dumps(data, renderers={}):
     "<?xml version='1.0' encoding='utf-8'?><data>1</data>"
 
     >>> dumps(None)
-    "<?xml version='1.0' encoding='utf-8'?><data>None</data>"
+    "<?xml version='1.0' encoding='utf-8'?><data />"
 
     >>> dumps(0)
     "<?xml version='1.0' encoding='utf-8'?><data>0</data>"
