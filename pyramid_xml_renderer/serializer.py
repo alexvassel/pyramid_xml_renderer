@@ -7,7 +7,7 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
     #Iterating through a dict and creating parts of xml like <key></key>
     if isinstance(data, dict):
         for (tag, child) in sorted(data.items()):
-            if isinstance(child, list) or isinstance(child, tuple):
+            if isinstance(child, (list, tuple)):
                 #Creating xml element from dict key
                 listelem = ET.Element(tag)
                 parent.append(listelem)
@@ -24,7 +24,7 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
                 #Recurse calling with dict value
                 _convert_to_xml_recurse(elem, child, adapters)
     #Same thing for lists and tuples, parts are like <item></item>
-    elif isinstance(data, list) or isinstance(data, tuple):
+    elif isinstance(data, (list, tuple)):
         for child in data:
             elem = ET.Element('item')
             parent.append(elem)
@@ -37,6 +37,10 @@ def _convert_to_xml_recurse(parent, data, adapters={}):
         data = data.__xml__()
         #Recurse calling with data from __xml__ method
         _convert_to_xml_recurse(elem, data, adapters)
+    elif data is None or data == 'None':
+        # Elements which value is None should be absent or empty. In this case, it will be empty
+        parent.text = ''
+
     #If data not list, tuple or dict, then adding its value to its parent (filling element with value)
     else:
         try:
@@ -82,7 +86,7 @@ def dumps(data, renderers={}):
     "<?xml version='1.0' encoding='utf-8'?><data>1</data>"
 
     >>> dumps(None)
-    "<?xml version='1.0' encoding='utf-8'?><data>None</data>"
+    "<?xml version='1.0' encoding='utf-8'?><data />"
 
     >>> dumps(0)
     "<?xml version='1.0' encoding='utf-8'?><data>0</data>"
@@ -101,7 +105,7 @@ def dumps(data, renderers={}):
 
     root = ET.Element('data')
     _convert_to_xml_recurse(root, data, renderers)
-    return "<?xml version='1.0' encoding='utf-8'?>" + ET.tostring(root, encoding='utf8', method='xml')
+    return "<?xml version='1.0' encoding='utf-8'?>{}".format(ET.tostring(root, encoding='utf-8', method='xml'))
 
 
 if __name__ == "__main__":

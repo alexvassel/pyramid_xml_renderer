@@ -25,4 +25,6 @@ class XML(object):
         return _render
 
     def add_adapter(self, adapter_type, adapter_func):
+        if not isinstance(adapter_type, type):
+            adapter_type = type(adapter_type)
         self.adapters[adapter_type] = adapter_func
